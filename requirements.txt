@@ -1,5 +1,5 @@
 pandas
+pymssql
 openpyxl
-pyodbc
 azure-identity
 azure-keyvault-secrets
