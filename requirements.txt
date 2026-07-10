@@ -1,0 +1,5 @@
+pandas
+openpyxl
+pyodbc
+azure-identity
+azure-keyvault-secrets
