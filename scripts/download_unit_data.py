@@ -54,7 +54,7 @@ sql_pass = cs_params["Password"]
 # Step 4: Connect to SQL Server
 # -----------------------------
 conn_str = (
-    f"Driver={{ODBC Driver 17 for SQL Server}};"
+    f"Driver={{ODBC Driver 18 for SQL Server}};"
     f"Server={server};"
     f"Database={database};"
     f"Uid={sql_user};"
