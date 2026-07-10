@@ -26,7 +26,7 @@ table_name = args.table_name
 status_column = args.status_column
 excel_file = args.output_file
 
-key_vault_url = f"https://{client8name}-eip-prod-kv.vault.azure.net/"
+key_vault_url = f"https://{client8name}.vault.azure.net/"
 credential = DefaultAzureCredential()
 secret_client = SecretClient(vault_url=key_vault_url, credential=credential)
 
