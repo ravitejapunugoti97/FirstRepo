@@ -33,7 +33,7 @@ secret_client = SecretClient(vault_url=key_vault_url, credential=credential)
 # -----------------------------
 # Step 2: Retrieve SQL connection string
 # -----------------------------
-secret_name = f"{client8name}-eip-{persona}-azuresqldb-connstring"
+secret_name = f"sql-connection-string"
 connection_string = secret_client.get_secret(secret_name).value
 
 # -----------------------------
