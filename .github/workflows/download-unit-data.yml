@@ -1,0 +1,57 @@
+name: Download Unit Data
+
+on:
+  workflow_dispatch:
+    inputs:
+      client-name:
+        description: Client Name
+        required: true
+
+      persona:
+        description: Persona
+        required: true
+
+      table-name:
+        description: SQL Table Name
+        required: true
+
+      status-column:
+        description: Status Column
+        required: false
+        default: status
+
+      output-file:
+        description: Output Excel File
+        required: false
+        default: output.xlsx
+
+jobs:
+  generate_excel:
+
+    runs-on: self-hosted
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Execute Script
+        run: |
+          python scripts/download_unit_data.py \
+            --client-name "${{ github.event.inputs.client-name }}" \
+            --persona "${{ github.event.inputs.persona }}" \
+            --table-name "${{ github.event.inputs.table-name }}" \
+            --status-column "${{ github.event.inputs.status-column }}" \
+            --output-file "${{ github.event.inputs.output-file }}"
