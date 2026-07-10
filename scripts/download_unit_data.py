@@ -39,7 +39,7 @@ secret_client = SecretClient(
 # -------------------------------------
 # Get SQL Connection String
 # -------------------------------------
-secret_name = f"sql-connection-string""
+secret_name = f"sql-connection-string"
 
 connection_string = secret_client.get_secret(secret_name).value
 
