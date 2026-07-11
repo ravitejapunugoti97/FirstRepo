@@ -77,34 +77,36 @@ conn = pymssql.connect(
 # -------------------------------------
 # Read table
 # -------------------------------------
-query = f"SELECT * FROM {persona}.{table_name}"
+try:
+    # Read table
+    query = f"SELECT * FROM {persona}.{table_name}"
 
-df = pd.read_sql(query, conn)
+    print(f"Executing Query: {query}")
 
-print("Total rows:", len(df))
-print(df.head())
+    df = pd.read_sql(query, conn)
 
-# -------------------------------------
-# Filter DROPPED Units
-# -------------------------------------
-filtered_df = df[
-    df[status_column].fillna("").str.upper() != "DROPPED"
-].copy()
+    print(f"Total rows fetched: {len(df)}")
 
-print("Rows after filtering:", len(filtered_df))
-# -------------------------------------
-# Add Ignore Unit column
-# -------------------------------------
-filtered_df["Ignore Unit"] = ""
+    if status_column not in df.columns:
+        raise ValueError(
+            f"Column '{status_column}' not found."
+        )
 
-# -------------------------------------
-# Save Excel
-# -------------------------------------
-filtered_df.to_excel(
-    output_file,
-    index=False
-)
+    filtered_df = df[
+        df[status_column].fillna("").str.upper() != "DROPPED"
+    ].copy()
 
-conn.close()
+    print(f"Rows after filtering: {len(filtered_df)}")
 
-print(f"Excel generated successfully: {output_file}")
+    filtered_df["Ignore Unit"] = ""
+
+    filtered_df.to_excel(output_file, index=False)
+
+    print(f"Excel generated successfully: {output_file}")
+
+except Exception as e:
+    print(f"Error: {e}")
+    raise
+
+finally:
+    conn.close()
