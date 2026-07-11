@@ -81,6 +81,9 @@ query = f"SELECT * FROM {persona}.{table_name}"
 
 df = pd.read_sql(query, conn)
 
+print("Total rows:", len(df))
+print(df.head())
+
 # -------------------------------------
 # Filter DROPPED Units
 # -------------------------------------
@@ -88,6 +91,7 @@ filtered_df = df[
     df[status_column].fillna("").str.upper() != "DROPPED"
 ].copy()
 
+print("Rows after filtering:", len(filtered_df))
 # -------------------------------------
 # Add Ignore Unit column
 # -------------------------------------
