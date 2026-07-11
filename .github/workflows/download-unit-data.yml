@@ -63,3 +63,9 @@ jobs:
             --table-name "${{ github.event.inputs.table-name }}" \
             --status-column "${{ github.event.inputs.status-column }}" \
             --output-file "${{ github.event.inputs.output-file }}"
+
+      - name: Upload Excel Artifact
+        uses: actions/upload-artifact@v4
+        with:
+            name: UnitData
+            path: UnitData.xlsx

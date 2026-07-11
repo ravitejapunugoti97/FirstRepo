@@ -85,7 +85,7 @@ df = pd.read_sql(query, conn)
 # Filter DROPPED Units
 # -------------------------------------
 filtered_df = df[
-    df[status_column].str.upper() != "DROPPED"
+    df[status_column].fillna("").str.upper() != "DROPPED"
 ].copy()
 
 # -------------------------------------
