@@ -77,7 +77,7 @@ conn = pymssql.connect(
 # -------------------------------------
 # Read table
 # -------------------------------------
-query = f"SELECT * FROM {table_name}"
+query = f"SELECT * FROM {persona}.{table_name}"
 
 df = pd.read_sql(query, conn)
 
