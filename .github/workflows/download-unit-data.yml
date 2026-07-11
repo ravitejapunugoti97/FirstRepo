@@ -64,8 +64,14 @@ jobs:
             --status-column "${{ github.event.inputs.status-column }}" \
             --output-file "${{ github.event.inputs.output-file }}"
 
+      - name: Verify Excel File
+        run: |
+          pwd
+          ls -la
+          find . -name "*.xlsx"
+
       - name: Upload Excel Artifact
         uses: actions/upload-artifact@v4
         with:
-            name: UnitData
-            path: UnitData.xlsx
+          name: UnitData
+          path: ${{ github.event.inputs.output-file }}
