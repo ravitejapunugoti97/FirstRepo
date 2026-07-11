@@ -4,6 +4,7 @@ import pymssql
 
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.secrets import SecretClient
+from azure.storage.filedatalake import DataLakeServiceClient
 
 # -------------------------------------
 # Parse arguments
@@ -15,6 +16,9 @@ parser.add_argument("--persona", required=True)
 parser.add_argument("--table-name", required=True)
 parser.add_argument("--status-column", default="status")
 parser.add_argument("--output-file", default="output.xlsx")
+parser.add_argument("--storage-account", required=True)
+parser.add_argument("--filesystem", required=True)
+directory = client_name
 
 args = parser.parse_args()
 
@@ -23,6 +27,9 @@ persona = args.persona
 table_name = args.table_name
 status_column = args.status_column
 output_file = args.output_file
+storage_account = args.storage_account
+filesystem = args.filesystem
+directory = client_name
 
 # -------------------------------------
 # Connect to Key Vault
@@ -78,7 +85,9 @@ conn = pymssql.connect(
 # Read table
 # -------------------------------------
 try:
+    # -------------------------------------
     # Read table
+    # -------------------------------------
     query = f"SELECT * FROM {persona}.{table_name}"
 
     print(f"Executing Query: {query}")
@@ -92,17 +101,62 @@ try:
             f"Column '{status_column}' not found."
         )
 
+    # -------------------------------------
+    # Filter DROPPED Units
+    # -------------------------------------
     filtered_df = df[
         df[status_column].fillna("").str.upper() != "DROPPED"
     ].copy()
 
     print(f"Rows after filtering: {len(filtered_df)}")
 
+    # -------------------------------------
+    # Add Ignore Unit column
+    # -------------------------------------
     filtered_df["Ignore Unit"] = ""
 
+    # -------------------------------------
+    # Save Excel
+    # -------------------------------------
     filtered_df.to_excel(output_file, index=False)
 
     print(f"Excel generated successfully: {output_file}")
+
+    # -------------------------------------
+    # Upload Excel to ADLS Gen2
+    # -------------------------------------
+    account_url = f"https://{storage_account}.dfs.core.windows.net"
+
+    service_client = DataLakeServiceClient(
+        account_url=account_url,
+        credential=credential
+    )
+
+    filesystem_client = service_client.get_file_system_client(
+        filesystem
+    )
+
+    # Create folder using client name
+    directory_client = filesystem_client.get_directory_client(
+        directory
+    )
+
+    file_client = directory_client.get_file_client(
+        output_file
+    )
+
+    with open(output_file, "rb") as file:
+        file_data = file.read()
+
+    file_client.upload_data(
+        file_data,
+        overwrite=True
+    )
+
+    print(
+        f"Excel uploaded successfully to "
+        f"{filesystem}/{client_name}/{output_file}"
+    )
 
 except Exception as e:
     print(f"Error: {e}")
