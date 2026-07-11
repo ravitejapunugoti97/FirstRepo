@@ -18,7 +18,6 @@ parser.add_argument("--status-column", default="status")
 parser.add_argument("--output-file", default="output.xlsx")
 parser.add_argument("--storage-account", required=True)
 parser.add_argument("--filesystem", required=True)
-directory = client_name
 
 args = parser.parse_args()
 
